@@ -1,99 +1,73 @@
-# ai-model
+# DVC Dataset Registry
 
-Python package that will provide the foundation for the project's machine learning components. It is built with `uv` and currently exposes a minimal CLI command.
+This _[DVC Data Registry]_ is a centralized place to manage raw data files for
+use in other example DVC projects, such as
+https://github.com/iterative/example-get-started.
 
-## Current Status
-
-The `ai-model` entry point prints a demo message. No model, dataset, or training pipeline has been implemented yet.
-
-## Prerequisites
-
-- Python `3.14`, specified by `.python-version` and required by the project;
-- [uv](https://docs.astral.sh/uv/) to create the environment and install dependencies.
+[dvc data registry]: https://dvc.org/doc/use-cases/data-registry
 
 ## Installation
 
-From this directory:
+Start by cloning the project:
 
-```powershell
-uv sync
+```console
+$ git clone https://github.com/iterative/dataset-registry
+$ cd dataset-registry
 ```
 
-This command installs runtime dependencies and the development group, then synchronizes the environment with `uv.lock`.
+This DVC project comes with a preconfigured DVC
+[remote storage](https://man.dvc.org/remote) to hold all of the datasets. This
+is a read-only HTTP remote.
 
-To install runtime dependencies only:
-
-```powershell
-uv sync --no-dev
+```console
+$ dvc remote list
+storage https://remote.dvc.org/dataset-registry
 ```
 
-## Dependencies
+**Important**: To be able to push to the default remote, overwrite it with:
 
-### Runtime
-
-| Dependency | Declaration | Resolved version | Role |
-| --- | --- | --- | --- |
-| `scikit-learn` | `>=1.9.0` | `1.9.0` | Machine learning algorithms, preprocessing, model training, and evaluation. |
-
-`scikit-learn` relies in particular on the following transitive dependencies, which are also present in `uv.lock`:
-
-| Transitive dependency | Resolved version | Role |
-| --- | --- | --- |
-| `numpy` | `2.5.3` | Numerical computing and array manipulation. |
-| `scipy` | `1.18.1` | Scientific computing used by several algorithms. |
-| `joblib` | `1.6.0` | Serialization and parallel computation. |
-| `threadpoolctl` | `3.6.0` | Thread-pool control for numerical libraries. |
-
-These transitive dependencies should not be added directly to `pyproject.toml` unless the code uses them independently of scikit-learn.
-
-### Development
-
-| Dependency | Declaration | Resolved version | Role |
-| --- | --- | --- | --- |
-| `jupyterlab` | `>=4.6.3` | `4.6.3` | Interactive environment for exploring data and experimenting with models. |
-
-JupyterLab installs several dependencies for notebooks, the Jupyter server, and the web interface. They are managed automatically by `uv.lock`.
-
-### Package Build
-
-The package uses the `uv_build` backend in the `>=0.12.9,<0.13.0` range. This dependency builds the package and is not required to run the model after installation.
-
-## Usage
-
-Run the current CLI command:
-
-```powershell
-uv run ai-model
+```console
+$ dvc remote add -d --local storage s3://dvc-public/remote/dataset-registry
 ```
 
-Launch JupyterLab:
+> This requires having configured corresponding S3 credentials locally.
 
-```powershell
-uv run jupyter lab
+## Testing data synchronization locally
+
+If you'd like to test commands like [`dvc push`](https://man.dvc.org/push),
+that require write access to the remote storage, the easiest way would be to set
+up a "local remote" on your file system:
+
+> This kind of remote is located in the local file system, but is external to
+> the DVC project.
+
+```console
+$ mkdir -P /tmp/dvc-storage
+$ dvc remote add local /tmp/dvc-storage
 ```
 
-Import the package from Python code:
+You should now be able to run:
 
-```python
-import ai_model
+```console
+$ dvc push -r local
 ```
 
-## Dependency Management
+## Datasets
 
-- Modify direct dependencies in `pyproject.toml`.
-- Run `uv lock` after a change to recalculate resolved versions.
-- Use `uv sync` to apply the lockfile to the local environment.
-- Keep `uv.lock` under version control to reproduce installations.
+The folder structure of this project groups datasets corresponding to the
+external projects they pertain to.
+After cloning and using [`dvc pull`](https://man.dvc.org/pull) to download data
+under DVC control, the workspace should look like this:
 
-## Structure
 
-```text
-ai_model/
-├── pyproject.toml
-├── uv.lock
-├── .python-version
+```console
+$ tree
+.
 ├── README.md
-├── src/
-  └── ai_model/
-    └── __init__.py
+├── get-started
+│   └── data.xml.dvc  # Dataset used in iterative/example-get-started
+├── mnist
+│   └── raw.dvc       # Dataset used in iterative/dvc-get-started
+├── fashion-mnist
+    └── raw.dvc       # Dataset used in iterative/dvc-get-started
 ```
