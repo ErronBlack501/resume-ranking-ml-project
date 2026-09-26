@@ -34,6 +34,7 @@ htmlcov/
 *.ipynb_checkpoints
 
 # Machine learning experiments and local artifacts
+mlflow.db
 mlruns/
 mlartifacts/
 wandb/
