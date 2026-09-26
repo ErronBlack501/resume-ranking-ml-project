@@ -1,6 +1,6 @@
-# ⚠️ COPIE de ai_model/src/custom_transformers.py
-# Doit rester strictement identique à l'original pour que joblib.load()
-# désérialise full_pipeline.pkl correctement.
+# ⚠️ COPY of ai_model/src/custom_transformers.py
+# Must remain strictly identical to the original for joblib.load()
+# to deserialize full_pipeline.pkl correctly.
 
 import re
 import ast
@@ -12,7 +12,7 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-# --- Fonctions de nettoyage (reprises telles quelles des étapes 3 et 4) ---
+# --- Cleaning functions (taken directly from steps 3 and 4) ---
 
 def clean_text_general(text):
     if pd.isna(text):
@@ -67,14 +67,14 @@ NUMERIC_COLS = [
 
 class ResumeFeatureBuilder(BaseEstimator, TransformerMixin):
     """
-    Prend un DataFrame de colonnes BRUTES (comme dans le CSV d'origine) et
-    produit un DataFrame de features prêtes pour le ColumnTransformer :
-    resume_text, job_text, job_position_name, + toutes les colonnes numériques.
-    Regroupe en une seule étape ce qu'on faisait aux étapes 3 et 4.
+    Takes a DataFrame of RAW columns (as in the original CSV) and
+    produces a DataFrame of features ready for the ColumnTransformer:
+    resume_text, job_text, job_position_name, + all numeric columns.
+    Combines in a single step what was done in steps 3 and 4.
     """
 
     def fit(self, X, y=None):
-        # Rien à apprendre ici : uniquement des transformations déterministes
+        # Nothing to learn here: only deterministic transformations
         return self
 
     def transform(self, X):
@@ -121,10 +121,10 @@ class ResumeFeatureBuilder(BaseEstimator, TransformerMixin):
 
 class TextSimilarityVectorizer(BaseEstimator, TransformerMixin):
     """
-    Reçoit un DataFrame à 2 colonnes [resume_text, job_text].
-    Vectorise les deux avec un TF-IDF au vocabulaire PARTAGÉ (fit sur les deux
-    colonnes concaténées), puis calcule la similarité cosinus ligne à ligne.
-    Sortie : hstack(resume_tfidf, job_tfidf, similarity) — même logique qu'à l'étape 4.
+    Receives a DataFrame with 2 columns [resume_text, job_text].
+    Vectorizes both with a SHARED vocabulary TF-IDF (fit on the two
+    concatenated columns), then calculates cosine similarity row by row.
+    Output: hstack(resume_tfidf, job_tfidf, similarity) — same logic as in step 4.
     """
 
     def __init__(self, max_features=200, ngram_range=(1, 2), stop_words="english"):

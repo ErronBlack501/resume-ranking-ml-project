@@ -16,7 +16,7 @@ AI_project/
 └── README.md
 ```
 
-### Composants
+### Components
 
 - **`ai_model`**: Python package using `scikit-learn`. Its `ai-model` entry point is currently a minimal example.
 - **`api`**: Minimal FastAPI service with interactive OpenAPI documentation and a health endpoint.
@@ -55,7 +55,7 @@ The API is available at <http://127.0.0.1:8000>.
 - Swagger documentation: <http://127.0.0.1:8000/docs>
 - Health check: <http://127.0.0.1:8000/health>
 
-Exemple de réponse :
+Example response:
 
 ```json
 {"status":"ok"}

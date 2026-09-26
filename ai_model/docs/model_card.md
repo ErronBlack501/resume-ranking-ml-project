@@ -1,58 +1,58 @@
-# Fiche modèle — Resume Ranking
+# Model Card — Resume Ranking
 
-## Résumé
+## Summary
 
-- **Modèle** : Random Forest Regressor (scikit-learn)
-- **Tâche** : Prédire `matched_score` (0-1) à partir d'un CV et d'une offre d'emploi
-- **Version** : v1
-- **Date** : 2026-09-26
-- **Run MLflow** : `random_forest_v1_tuned` (run_id `36843610cea64272a7e4d5c4e488b569`)
+- **Model**: Random Forest Regressor (scikit-learn)
+- **Task**: Predict `matched_score` (0-1) from a resume and a job posting
+- **Version**: v1
+- **Date**: 2026-09-26
+- **MLflow Run**: `random_forest_v1_tuned` (run_id `36843610cea64272a7e4d5c4e488b569`)
 
-## Performance (test set, split par CV)
+## Performance (test set, split by resume)
 
-| Métrique | Valeur |
+| Metric | Value |
 |---|---|
 | R² | 0.486 |
 | MAE | 0.096 |
 | MSE | 0.016 |
 
-## Hyperparamètres
+## Hyperparameters
 n_estimators: 300
 min_samples_leaf: 3
 max_features: sqrt
 max_depth: None
 
 
-## Données d'entraînement
+## Training Data
 
-- `data/raw/resume_data_for_ranking.csv` (9 544 lignes, 340 CV uniques × 28 postes)
-- Split train/test par CV (`GroupShuffleSplit`, test_size=0.2, random_state=42) pour éviter la fuite de données
+- `data/raw/resume_data_for_ranking.csv` (9,544 rows, 340 unique resumes × 28 positions)
+- Train/test split by resume (`GroupShuffleSplit`, test_size=0.2, random_state=42) to avoid data leakage
 
-## Features utilisées
+## Features Used
 
-- TF-IDF (200 mots, unigrammes+bigrammes) sur le texte CV et le texte poste, vocabulaire partagé
-- Similarité cosinus entre les deux textes (`text_similarity`)
-- One-hot encoding de `job_position_name` (`handle_unknown="ignore"`)
-- Features numériques : `skills_overlap`, `experience_years_min`, flags `has_xxx` (présence des sections du CV)
+- TF-IDF (200 words, unigrams+bigrams) on resume text and job text, shared vocabulary
+- Cosine similarity between the two texts (`text_similarity`)
+- One-hot encoding of `job_position_name` (`handle_unknown="ignore"`)
+- Numeric features: `skills_overlap`, `experience_years_min`, flags `has_xxx` (presence of resume sections)
 
-## Limite connue
+## Known Limitation
 
-Le modèle s'appuie en partie sur des mots-métiers (ex : `autocad`, `civil engineering`) corrélés à un biais structurel du dataset (les postes d'ingénierie physique ont des scores plus bas dans ce dataset), plutôt que uniquement sur le matching sémantique CV/poste. À revoir quand le dataset sera enrichi en CV et postes plus variés (v2).
+The model relies partly on job-specific words (e.g., `autocad`, `civil engineering`) correlated with a structural bias in the dataset (physical engineering positions have lower scores in this dataset), rather than solely on semantic resume/job matching. To be reviewed when the dataset is enriched with more varied resumes and positions (v2).
 
-## Comment charger le modèle
+## How to Load the Model
 
 ```python
 import sys
-sys.path.append("src")  # nécessaire pour désérialiser les classes custom
+sys.path.append("src")  # necessary to deserialize custom classes
 import joblib
 
 pipeline = joblib.load("data/processed/full_pipeline.pkl")
-prediction = pipeline.predict(nouveau_dataframe_brut)
+prediction = pipeline.predict(new_raw_dataframe)
 ```
 
-⚠️ Le fichier `src/custom_transformers.py` doit être présent et importable pour charger ce pipeline (il contient `ResumeFeatureBuilder` et `TextSimilarityVectorizer`).
+⚠️ The file `src/custom_transformers.py` must be present and importable to load this pipeline (it contains `ResumeFeatureBuilder` and `TextSimilarityVectorizer`).
 
-## Dépendances clés
+## Key Dependencies
 
 - scikit-learn 1.9.0
 - pandas, numpy, scipy

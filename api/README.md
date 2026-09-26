@@ -1,6 +1,6 @@
 ﻿# Resume Ranking API
 
-API FastAPI exposant le modèle de matching CV/poste entraîné dans `ai_model/`.
+FastAPI API exposing the resume/job matching model trained in `ai_model/`.
 
 ## Installation
 
@@ -8,31 +8,31 @@ API FastAPI exposant le modèle de matching CV/poste entraîné dans `ai_model/`
 uv sync
 ```
 
-## Récupérer/mettre à jour le modèle
+## Retrieve/update the model
 
-Le modèle (`model/full_pipeline.pkl`) est importé depuis `ai_model` via DVC.
+The model (`model/full_pipeline.pkl`) is imported from `ai_model` via DVC.
 
 ```bash
 dvc update model/full_pipeline.pkl.dvc
 ```
 
-## Lancer le serveur
+## Start the server
 
 ```bash
 uv run python -m api
 ```
 
-L'API démarre sur `http://localhost:8000`. Documentation interactive : `http://localhost:8000/docs`.
+The API starts on `http://localhost:8000`. Interactive documentation: `http://localhost:8000/docs`.
 
 ## Endpoints
 
 ### `GET /health`
-Vérifie que l'API et le modèle sont chargés.
+Checks that the API and model are loaded.
 
 ### `POST /predict`
-Prédit un score de matching CV/poste (0 à 1).
+Predicts a resume/job matching score (0 to 1).
 
-**Format attendu** (tous les champs optionnels, voir `src/api/schemas.py` pour le détail) :
+**Expected format** (all fields optional, see `src/api/schemas.py` for details):
 
 ```json
 {
@@ -46,7 +46,7 @@ Prédit un score de matching CV/poste (0 à 1).
 }
 ```
 
-**Réponse :**
+**Response:**
 
 ```json
 {
@@ -56,19 +56,19 @@ Prédit un score de matching CV/poste (0 à 1).
 }
 ```
 
-- `job_position_known: false` signale que `job_position_name` ne fait pas partie des 28 postes vus à l'entraînement — le modèle se base alors uniquement sur le contenu textuel pour ce signal.
-- `warnings` remonte les problèmes non bloquants (données insuffisantes, poste inconnu...).
-- Un champ non reconnu dans la requête (mal nommé, par exemple) renvoie une erreur 422 explicite plutôt que d'être ignoré silencieusement.
+- `job_position_known: false` signals that `job_position_name` is not part of the 28 positions seen during training — the model then relies solely on textual content for this signal.
+- `warnings` returns non-blocking problems (insufficient data, unknown position...).
+- An unrecognized field in the request (wrongly named, for example) returns an explicit 422 error rather than being silently ignored.
 
-## Limite connue du modèle
+## Known model limitation
 
-Voir `../ai_model/docs/model_card.md` — le modèle s'appuie en partie sur des mots-métiers corrélés à un biais du dataset d'entraînement (28 postes fixes), plutôt qu'uniquement sur le matching sémantique. À réévaluer avec un dataset enrichi (v2).
+See `../ai_model/docs/model_card.md` — the model relies partly on job-specific words correlated with a bias in the training dataset (28 fixed positions), rather than solely on semantic matching. To be re-evaluated with an enriched dataset (v2).
 
-## Versions figées (doivent rester synchronisées avec `ai_model`)
+## Frozen versions (must remain synchronized with `ai_model`)
 
 - Python 3.13
 - scikit-learn 1.9.0
 - pandas 3.0.6
 - numpy 2.5.3
 
-⚠️ Ces versions doivent correspondre exactement à celles utilisées dans `ai_model` pour désérialiser `full_pipeline.pkl` sans erreur.
+⚠️ These versions must correspond exactly to those used in `ai_model` to deserialize `full_pipeline.pkl` without error.

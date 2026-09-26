@@ -4,9 +4,9 @@ from pydantic import BaseModel, Field, ConfigDict
 
 class MatchRequest(BaseModel):
     """
-    Format JSON attendu par l'API. Tous les champs sont optionnels — un champ
-    absent est traité exactement comme un NaN dans le dataset d'entraînement
-    (voir ResumeFeatureBuilder : has_xxx=0, texte vide).
+    JSON format expected by the API. All fields are optional — a missing
+    field is treated exactly as a NaN in the training dataset
+    (see ResumeFeatureBuilder: has_xxx=0, empty text).
     """
     model_config = ConfigDict(
         populate_by_name=True,
@@ -24,41 +24,41 @@ class MatchRequest(BaseModel):
         },
     )
 
-    # --- Côté CV ---
+    # --- Resume side ---
     career_objective: Optional[str] = None
-    skills: Optional[List[str]] = Field(default=None, description="Liste des compétences du candidat")
+    skills: Optional[List[str]] = Field(default=None, description="List of candidate skills")
     certification_providers: Optional[str] = Field(
-        default=None, description="Renseigné si le candidat a des certifications"
+        default=None, description="Filled if the candidate has certifications"
     )
     languages: Optional[str] = Field(
-        default=None, description="Renseigné si le candidat a listé des langues"
+        default=None, description="Filled if the candidate has listed languages"
     )
     extra_curricular_activity_types: Optional[str] = Field(
-        default=None, description="Renseigné si le candidat a des activités extra-scolaires"
+        default=None, description="Filled if the candidate has extra-curricular activities"
     )
 
-    # --- Côté poste ---
+    # --- Job side ---
     job_position_name: Optional[str] = Field(
-        default=None, description="Intitulé du poste. Si inconnu du dataset d'entraînement, le modèle continue de fonctionner avec un signal en moins."
+        default=None, description="Job title. If unknown in the training dataset, the model continues to function with one less signal."
     )
     skills_required: Optional[str] = Field(
-        default=None, description="Compétences requises, une par ligne (séparées par \\n)"
+        default=None, description="Required skills, one per line (separated by \\n)"
     )
     educationaL_requirements: Optional[str] = None
     responsibilities_1: Optional[str] = Field(
-        default=None, alias="responsibilities.1", description="Responsabilités du poste"
+        default=None, alias="responsibilities.1", description="Job responsibilities"
     )
     experiencere_requirement: Optional[str] = Field(
-        default=None, description="Expérience requise, ex: '3+ years'"
+        default=None, description="Required experience, e.g., '3+ years'"
     )
     age_requirement: Optional[str] = Field(
-        default=None, description="Renseigné si le poste a une exigence d'âge"
+        default=None, description="Filled if the position has an age requirement"
     )
 
 
 class MatchResponse(BaseModel):
-    matched_score: float = Field(..., description="Score de matching prédit, entre 0 et 1")
+    matched_score: float = Field(..., description="Predicted matching score, between 0 and 1")
     job_position_known: bool = Field(
-        ..., description="False si job_position_name n'était pas dans les 28 postes du dataset d'entraînement."
+        ..., description="False if job_position_name was not in the 28 positions of the training dataset."
     )
-    warnings: List[str] = Field(default_factory=list, description="Avertissements non bloquants sur la qualité des données fournies")
+    warnings: List[str] = Field(default_factory=list, description="Non-blocking warnings about the quality of provided data")

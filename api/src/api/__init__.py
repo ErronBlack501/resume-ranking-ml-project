@@ -25,7 +25,7 @@ PIPELINE_PATH = Path(__file__).resolve().parents[2] / "model" / "full_pipeline.p
 def create_app() -> FastAPI:
     application = FastAPI(
         title="Resume Ranking API",
-        description="Prédit un score de matching CV/poste à partir d'un CV et d'une offre au format structuré.",
+        description="Predicts a resume/job matching score from a resume and a job posting in structured format.",
         version="0.1.0",
         docs_url="/docs",
         redoc_url=None,
@@ -46,14 +46,14 @@ def create_app() -> FastAPI:
     @application.post("/predict", response_model=MatchResponse)
     def predict(payload: MatchRequest) -> MatchResponse:
         if state["pipeline"] is None:
-            raise HTTPException(status_code=503, detail="Le modèle n'est pas encore chargé.")
+            raise HTTPException(status_code=503, detail="The model is not yet loaded.")
 
         warnings = []
 
         if not payload.career_objective and not payload.skills:
-            warnings.append("Aucune information CV fournie — le score risque d'être peu fiable.")
+            warnings.append("No resume information provided — the score may be unreliable.")
         if not payload.skills_required and not payload.responsibilities_1:
-            warnings.append("Aucune information poste fournie — le score risque d'être peu fiable.")
+            warnings.append("No job information provided — the score may be unreliable.")
 
         job_known = (
             payload.job_position_name in state["known_job_positions"]
@@ -61,8 +61,8 @@ def create_app() -> FastAPI:
         )
         if payload.job_position_name and not job_known:
             warnings.append(
-                f"Le poste '{payload.job_position_name}' n'était pas dans les données d'entraînement — "
-                "le modèle se base uniquement sur le contenu textuel pour ce champ."
+                f"The position '{payload.job_position_name}' was not in the training data — "
+                "the model relies solely on textual content for this field."
             )
 
         skills_str = str(payload.skills) if payload.skills else np.nan
@@ -72,7 +72,8 @@ def create_app() -> FastAPI:
             "certification_providers": payload.certification_providers if payload.certification_providers else np.nan,
             "languages": payload.languages if payload.languages else np.nan,
             "extra_curricular_activity_types": payload.extra_curricular_activity_types if payload.extra_curricular_activity_types else np.nan,
-"job_position_name": payload.job_position_name if payload.job_position_name else "unknown_position",            "skills_required": payload.skills_required if payload.skills_required else np.nan,
+            "job_position_name": payload.job_position_name if payload.job_position_name else "unknown_position",
+            "skills_required": payload.skills_required if payload.skills_required else np.nan,
             "educationaL_requirements": payload.educationaL_requirements if payload.educationaL_requirements else np.nan,
             "responsibilities.1": payload.responsibilities_1 if payload.responsibilities_1 else np.nan,
             "experiencere_requirement": payload.experiencere_requirement if payload.experiencere_requirement else np.nan,
@@ -83,7 +84,7 @@ def create_app() -> FastAPI:
         try:
             score = state["pipeline"].predict(df)[0]
         except Exception as e:
-            raise HTTPException(status_code=422, detail=f"Erreur lors de la prédiction : {e}")
+            raise HTTPException(status_code=422, detail=f"Error during prediction: {e}")
 
         score = float(np.clip(score, 0.0, 1.0))
 

@@ -1,35 +1,35 @@
-ÉTAPE 1
-Comprendre le dataset
+STEP 1
+Understand the dataset
         ↓
-ÉTAPE 2
-EDA :  Exploratory Data Analysis
+STEP 2
+EDA: Exploratory Data Analysis
         ↓
-ÉTAPE 3
-Nettoyage des textes
+STEP 3
+Text cleaning
         ↓
-ÉTAPE 4
-Créer les features
+STEP 4
+Create features
         ↓
-ÉTAPE 5
+STEP 5
 Baseline Ridge
         ↓
-ÉTAPE 6
+STEP 6
 Random Forest
         ↓
-ÉTAPE 7
+STEP 7
 Gradient Boosting
         ↓
-ÉTAPE 8
-Cross-validation + comparaison
+STEP 8
+Cross-validation + comparison
         ↓
-ÉTAPE 9
-Choisir/configurer le modèle
+STEP 9
+Choose/configure the model
         ↓
-ÉTAPE 10
-Pipeline sklearn
+STEP 10
+sklearn Pipeline
         ↓
-ÉTAPE 11
-Sauvegarder le modèle
+STEP 11
+Save the model
         ↓
-ÉTAPE 12
+STEP 12
 API / application
