@@ -1,0 +1,12 @@
+md5: 518f633b16e55c558be0eac66009d01f
+frozen: true
+deps:
+- path: data/processed/full_pipeline.pkl
+  repo:
+    url: ../ai_model
+    rev_lock: 9b0549a52ee0862cdcbc70b3a9a8aa04a7667dcb
+outs:
+- md5: 4d6e2e874a0c8a9110be3e800a5e14bf
+  size: 41532810
+  hash: md5
+  path: full_pipeline.pkl
