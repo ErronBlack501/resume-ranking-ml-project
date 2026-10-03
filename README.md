@@ -102,6 +102,16 @@ uv run jupyter lab
 
 The API dependencies include Uvicorn with its standard extras for the development server.
 
+## Datasets
+
+The raw CSV datasets and their original sources are:
+
+- `ai_model/data/raw/resume_data_for_ranking.csv` — [Resume Data for Ranking](https://www.kaggle.com/datasets/thejohnwick001/resume-data-for-ranking); managed with DVC.
+- `ai_model/data/raw/Resume.csv` — [Resume Dataset](https://www.kaggle.com/datasets/snehaanbhawal/resume-dataset); currently tracked by Git.
+- `ai_model/data/raw/job_descriptions.csv` — [Job Description Dataset](https://www.kaggle.com/datasets/ravindrasinghrana/job-description-dataset); currently tracked by Git.
+
+The `Resume.csv` and `job_descriptions.csv` names are listed in `ai_model/data/raw/.gitignore`, but Git continues tracking them until they are explicitly removed from the index. To retrieve the DVC-managed dataset in a fresh checkout, configure access to the project's DVC remote and run `dvc pull` from the `ai_model` directory.
+
 ## Contributing
 
 1. Create or activate the relevant component environment with `uv sync`.
