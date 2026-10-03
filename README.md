@@ -1,6 +1,8 @@
 # AI Project
 
-Python monorepo containing a machine learning package and a FastAPI service intended to expose the model.
+A resume-to-job matching and ranking project. It uses machine learning and natural-language features to estimate how well a candidate's resume matches a job posting, returning a score between 0 and 1. The score is intended to support candidate search and prioritization; it is not a hiring decision.
+
+The repository contains a scikit-learn model package and a FastAPI service. The API accepts structured resume and job-posting information and returns a predicted match score, along with warnings when input information is incomplete or the job title is unfamiliar.
 
 ## Architecture
 
@@ -18,8 +20,8 @@ AI_project/
 
 ### Components
 
-- **`ai_model`**: Python package using `scikit-learn`. Its `ai-model` entry point is currently a minimal example.
-- **`api`**: Minimal FastAPI service with interactive OpenAPI documentation and a health endpoint.
+- **`ai_model`**: Model development and training package. The current model combines resume/job text similarity, skills overlap, experience information, and job-position features to estimate a match score.
+- **`api`**: FastAPI inference service. Its `POST /predict` endpoint returns a match score from 0 to 1; `/health` reports service and model status.
 - **`docker-compose.yml`**: Present but no services are configured yet.
 
 ## Prerequisites
@@ -71,7 +73,7 @@ From the `ai_model` directory:
 uv run ai-model
 ```
 
-The current entry point prints a demo message. Inference logic can be added under `ai_model/src/ai_model/` and then integrated into the API.
+The package contains the model feature engineering and evaluation code. The trained inference pipeline is loaded by the API from `api/model/full_pipeline.pkl`.
 
 ## Testing and Quality
 
